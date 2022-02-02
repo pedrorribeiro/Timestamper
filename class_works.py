@@ -3,6 +3,10 @@ import asyncio
 import json
 from dataclasses import dataclass
 
+@dataclass
+class Maker:
+    #   TODO:  need to complete
+
 
 @dataclass
 class Loader:
@@ -35,6 +39,7 @@ class TimeManagement:
         current_time = time.time()
         fixed_time = current_time - self.start
         return fixed_time
+    # TODO: need to add pause feature
 
 
 @dataclass
