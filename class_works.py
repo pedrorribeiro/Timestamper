@@ -18,10 +18,11 @@ class Loader:
     def split_settings(self):
         self.phase_list = self.settings['phase_list']
         self.n_phases = self.settings['#phases']
-        for i in self.n_phases:
+        for i in self.phase_list:
             self.n_rounds.append(self.settings['#rounds'][i])
-        for i in self.n_phases:
+        for i in self.phase_list:
             self.round_timers.append(self.settings['round_timers'][i])
+
 
 @dataclass
 class TimeManagement:
@@ -37,11 +38,25 @@ class TimeManagement:
 
 
 @dataclass
-class Session(TimeManagement):
+class Session(Loader):
     allowed_phases: list
+    first_phase: 'str'
     phase: str
-    round: int = 0
+    phase_n: int = 1
+    round: int = 1
 
     def __init__(self):
         super().__init__()
-        self.allowed_phases =
+        self.allowed_phases = self.phase_list
+        self.first_phase = self.allowed_phases[1]
+        self.phase = self.first_phase
+
+    def next_phase(self):
+        self.phase = self.allowed_phases[self.phase_n]
+        self.round = 1
+
+    def next_round(self):
+        if self.round + 1 <= self.n_rounds[self.phase_n]:
+            self.round = self.round + 1
+        else:
+            self.next_phase()
