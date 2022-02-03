@@ -78,6 +78,7 @@ class Session:
     allowed_phases: list
     first_phase: str
     phase: str
+    n_rounds: list
     phase_n: int = 1
     round: int = 1
 
@@ -86,6 +87,7 @@ class Session:
         loader.mak_object()
         loader.split_settings()
         self.allowed_phases = loader.phase_list
+        self.n_rounds = loader.n_rounds
         self.first_phase = self.allowed_phases[1]
         self.phase = self.first_phase
 
