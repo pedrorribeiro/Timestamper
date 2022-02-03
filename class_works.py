@@ -72,6 +72,7 @@ class TimeManagement:
     def time_reset(self):
         self.start = time.time()
 
+
 @dataclass
 class Session(Loader):
     allowed_phases: list
