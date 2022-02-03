@@ -1,0 +1,4 @@
+{"phase_list": ["Baseline", "TSST 1", "Test Game", "Test Game Self-report", "TSST 2", "Stress Reduction Game", "SRG Self-Report", "TSST 3", "Stressor Game", "Stressor Gamer Self-Report"],
+  "#phases": 10, "#rounds": [24, 10, 5985, 1, 10, 5985, 1, 10, 5985, 1],
+  "round_timers": [5, 5985, 5985, 5985, 5985, 5985, 5985, 5985, 5985, 5985]
+}

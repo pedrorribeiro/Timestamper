@@ -12,7 +12,7 @@ class Maker:
     n_rounds: list
     round_timers: list
 
-    def __innit__(self):
+    def make_object(self):
         n = int(input('Input the number of phases'))
         self.phase_list = list(map(str, input('input phase list: "element 1" "element 2" etc.').strip().split()))[:n]
         self.n_phases = n
