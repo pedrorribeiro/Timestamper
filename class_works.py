@@ -3,9 +3,37 @@ import asyncio
 import json
 from dataclasses import dataclass
 
+
 @dataclass
 class Maker:
-    #   TODO:  need to complete
+    setting_list: dict
+    phase_list: list
+    n_phases: int
+    n_rounds: list
+    round_timers: list
+
+    def __innit__(self):
+        n = int(input('Input the number of phases'))
+        self.phase_list = list(map(str, input('input phase list: "element 1" "element 2" etc.').strip().split()))[:n]
+        self.n_phases = n
+        self.n_rounds = list(map(str, input('input list with number '
+                                            'of rounds in each phase: "element 1" "element 2" etc.').strip().split()))[
+                        :n]
+        self.round_timers = list(map(int, input('input list with round timers in each phase:'
+                                                ' element 1 element 2 etc. '
+                                                'if round does not have a timer input 5985').strip().split()))[:n]
+
+    def dict_maker(self):
+        self.setting_list = {
+            'phase_list': self.phase_list,
+            '#phases': self.n_phases,
+            '#rounds': self.n_rounds,
+            'round_timers': self.round_timers
+        }
+
+    def upload_settings(self):
+        with open('settings.json', 'w') as json_file:
+            json.dump(self.setting_list, json_file)
 
 
 @dataclass
@@ -17,7 +45,8 @@ class Loader:
     round_timers: list
 
     def __innit__(self):
-        self.settings = json.load('settings.json')
+        with open('setting.json', 'r') as file:
+            self.settings = json.load(file)
 
     def split_settings(self):
         self.phase_list = self.settings['phase_list']
