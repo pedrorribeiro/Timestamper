@@ -61,7 +61,7 @@ class Loader:
 class TimeManagement:
     start: float
 
-    def __init__(self):
+    def make_object(self):
         self.start = time.time()
 
     def get_time(self):
