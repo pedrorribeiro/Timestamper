@@ -79,7 +79,7 @@ class Session(Loader):
     phase_n: int = 1
     round: int = 1
 
-    def __init__(self):
+    def make_object(self):
         super().__init__()
         self.allowed_phases = self.phase_list
         self.first_phase = self.allowed_phases[1]
