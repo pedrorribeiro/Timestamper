@@ -44,16 +44,16 @@ class Loader:
     n_rounds: list
     round_timers: list
 
-    def make_object(self):
-        with open('setting.json', 'r') as file:
+    def mak_object(self):
+        with open('settings.json', 'r') as file:
             self.settings = json.load(file)
 
     def split_settings(self):
         self.phase_list = self.settings['phase_list']
         self.n_phases = self.settings['#phases']
-        for i in self.phase_list:
-            self.n_rounds.append(self.settings['#rounds'][i])
-        for i in self.phase_list:
+        for i in range(1, len(self.phase_list)):
+            self.n_rounds.append(self.settings['#rounds'][int(i)])
+        for i in range(1, len(self.phase_list)):
             self.round_timers.append(self.settings['round_timers'][i])
 
 
@@ -61,7 +61,7 @@ class Loader:
 class TimeManagement:
     start: float
 
-    def make_object(self):
+    def mek_object(self):
         self.start = time.time()
 
     def get_time(self):
@@ -74,18 +74,23 @@ class TimeManagement:
 
 
 @dataclass
-class Session(Loader):
+class Session:
     allowed_phases: list
-    first_phase: 'str'
+    first_phase: str
     phase: str
     phase_n: int = 1
     round: int = 1
 
     def make_object(self):
-        super().__init__()
-        self.allowed_phases = self.phase_list
+        loader = Loader({}, [], 1, [], [])
+        loader.mak_object()
+        loader.split_settings()
+        self.allowed_phases = loader.phase_list
         self.first_phase = self.allowed_phases[1]
         self.phase = self.first_phase
+
+    def phase_n_plus_one(self):
+        self.phase_n = self.phase_n + 1
 
     def next_phase(self):
         self.phase = self.allowed_phases[self.phase_n]
@@ -95,4 +100,6 @@ class Session(Loader):
         if self.round + 1 <= self.n_rounds[self.phase_n]:
             self.round = self.round + 1
         else:
+            self.phase_n_plus_one()
             self.next_phase()
+
