@@ -44,7 +44,7 @@ class Loader:
     n_rounds: list
     round_timers: list
 
-    def __innit__(self):
+    def make_object(self):
         with open('setting.json', 'r') as file:
             self.settings = json.load(file)
 
