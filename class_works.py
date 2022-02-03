@@ -68,8 +68,9 @@ class TimeManagement:
         current_time = time.time()
         fixed_time = current_time - self.start
         return fixed_time
-    # TODO: need to add pause feature
 
+    def time_reset(self):
+        self.start = time.time()
 
 @dataclass
 class Session(Loader):
