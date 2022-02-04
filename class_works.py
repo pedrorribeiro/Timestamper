@@ -81,7 +81,7 @@ class Session:
     first_phase: str
     phase: str
     n_rounds: list
-    phase_n: int = 1
+    phase_n: int = 0
     round: int = 1
 
     def make_object(self):
@@ -89,14 +89,17 @@ class Session:
         loader.mak_object()
         loader.split_settings()
         self.allowed_phases = loader.phase_list
+        self.phase_n = 0
+        self.round = 1
         self.n_rounds = loader.n_rounds
-        self.first_phase = self.allowed_phases[1]
+        self.first_phase = self.allowed_phases[0]
         self.phase = self.first_phase
 
     def phase_n_plus_one(self):
         self.phase_n = self.phase_n + 1
 
     def next_phase(self):
+        self.phase_n_plus_one()
         self.phase = self.allowed_phases[self.phase_n]
         self.round = 1
 
@@ -117,33 +120,31 @@ class Manager:
         today = date.today()
         self.subject = {
             'subject': int(input('Insert Subject ID: \n')),
-            'Date': today.strftime("%d/%m/%Y"),
+            'Date': today.strftime("%d-%m-%Y"),
             'Timestamp': {
             }
         }
         self.sub = self.subject['subject']
         self.td = self.subject['Date']
         filename = f'{self.sub}_{self.td}.json'
-        path = f'.//{filename}'
+        path = f'./{filename}'
         if os.path.isfile(path):
             with open(filename, 'r') as check:
                 data = json.load(check)
             if 'subject' in data:
                 answer = int(input('A previous session with this subject and this date was detected. '
-                                   'Would you like to restart (1) or continue(2) the session?\n'))
+                                   'Would you like to restart (1) or continue(2) the session? \n'))
                 if answer == 1:
                     with open(filename, 'w+') as file:
                         json.dump(self.subject, file)
                     print(f'The protocol will restart')
                 elif answer == 2:
-                    with open('current.txt', 'r') as current:
+                    with open('current.json', 'r') as current:
                         phase = json.load(current)
                     self.session.phase = phase['phase']
                     self.session.round = phase['round']
         else:
-            #filename = Path(filename)
-            #filename.touch(exist_ok=True)
-            with open(filename, 'w+') as file:
+            with open(path, 'w+') as file:
                 json.dump(self.subject, file)
 
     def fill_dict(self):
@@ -177,9 +178,10 @@ class Manager:
     def end_phase(self):
         with open(f'{self.sub}_{self.td}.json', 'r+') as file:
             self.subject = json.load(file)
-        self.subject['Timestamp'][self.session.phase][self.session.round] = self.timer.get_time()
+        self.subject['Timestamp'][self.session.phase]['Phase End'] = self.timer.get_time()
         with open(f'{self.sub}_{self.td}.json', 'w') as file:
             json.dump(self.subject, file)
+        print('The phase has been ended.')
 
     def new_round(self):
         self.session.next_round()
