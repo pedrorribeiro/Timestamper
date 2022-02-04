@@ -104,7 +104,6 @@ class Session:
         self.round = self.round + 1
 
 
-
 @dataclass
 class Manager:
     subject: dict
@@ -117,8 +116,8 @@ class Manager:
         self.session.make_object()
         today = date.today()
         self.subject = {
-            'subject': input('Insert Subject ID'),
-            'Date': today.strftime("%d/%m/%Y")
+            'subject': input('Insert Subject ID: \n'),
+            'Date': today.strftime("%d/%m/%Y"),
             'Timestamp': {
             }
         }
@@ -131,7 +130,7 @@ class Manager:
                 data = json.load(check)
             if 'subject' in data:
                 answer = int(input('A previous session with this subject and this date was detected. '
-                                'Would you like to restart (1) or continue(2) the session?\n'))
+                                   'Would you like to restart (1) or continue(2) the session?\n'))
                 if answer == 1:
                     with open(filename, 'w') as file:
                         json.dump(self.subject, file)
@@ -186,7 +185,7 @@ class Manager:
         self.fill_dict()
 
     def end(self):
-        with open(f'{self.sub}_{self.td}.json', r+) as file:
+        with open(f'{self.sub}_{self.td}.json', 'r+') as file:
             self.subject = json.load(file)
         self.subject['Timestamp']['end'] = self.timer.get_time()
         with open(f'{self.sub}_{self.td}.json', 'w') as file:
