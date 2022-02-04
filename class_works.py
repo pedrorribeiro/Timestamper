@@ -115,6 +115,7 @@ class Manager:
     td: str
     session: Session = Session([], '', '', [], 1, 1)
     timer: TimeManagement = TimeManagement(1.1)
+    # TODO: print phases sequentially
 
     def make_dict(self):
         today = date.today()
