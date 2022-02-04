@@ -18,12 +18,12 @@ class Maker:
         n = int(input('Input the number of phases'))
         self.phase_list = list(map(str, input('input phase list: "element 1" "element 2" etc.').strip().split()))[:n]
         self.n_phases = n
-        self.n_rounds = list(map(str, input('input list with number '
-                                            'of rounds in each phase: "element 1" "element 2" etc.').strip().split()))[
+        self.n_rounds = list(map(str, input('input list with number \n'
+                                            'of rounds in each phase: "element 1" "element 2" etc. \n').strip().split()))[
                         :n]
-        self.round_timers = list(map(int, input('input list with round timers in each phase:'
-                                                ' element 1 element 2 etc. '
-                                                'if round does not have a timer input 5985').strip().split()))[:n]
+        self.round_timers = list(map(int, input('input list with round timers in each phase: \n'
+                                                ' element 1 element 2 etc. \n'
+                                                'if round does not have a timer input 5985. \n').strip().split()))[:n]
 
     def dict_maker(self):
         self.setting_list = {
@@ -101,11 +101,8 @@ class Session:
         self.round = 1
 
     def next_round(self):
-        if self.round + 1 <= self.n_rounds[self.phase_n]:
-            self.round = self.round + 1
-        else:
-            self.phase_n_plus_one()
-            self.next_phase()
+        self.round = self.round + 1
+
 
 
 @dataclass
@@ -115,9 +112,9 @@ class Manager:
     td: str
     session: Session = Session([], '', '', [], 1, 1)
     timer: TimeManagement = TimeManagement(1.1)
-    # TODO: print phases sequentially
 
     def make_dict(self):
+        self.session.make_object()
         today = date.today()
         self.subject = {
             'subject': input('Insert Subject ID'),
@@ -138,6 +135,7 @@ class Manager:
                 if answer == 1:
                     with open(filename, 'w') as file:
                         json.dump(self.subject, file)
+                    print(f'The protocol will restart')
                 elif answer == 2:
                     with open('current.txt', 'r') as current:
                         phase = json.load(current)
@@ -162,14 +160,26 @@ class Manager:
         current_pr = {'phase': self.session.phase, 'round': self.session.round}
         with open('current.json', 'w') as current:
             json.dump(current_pr, current)
+        print(f"{phase}, round {self.session.round}. \n")
 
     def start(self):
-        self.session.make_object()
         self.make_dict()
         self.timer.mek_object()
         self.fill_dict()
         current = f'{self.session.phase}: {self.session.round}'
         print(current)
+
+    def new_phase(self):
+        self.timer.mek_object()
+        self.session.next_phase()
+        self.fill_dict()
+
+    def end_phase(self):
+        with open(f'{self.sub}_{self.td}.json', 'r+') as file:
+            self.subject = json.load(file)
+        self.subject['Timestamp'][self.session.phase][self.session.round] = self.timer.get_time()
+        with open(f'{self.sub}_{self.td}.json', 'w') as file:
+            json.dump(self.subject, file)
 
     def new_round(self):
         self.session.next_round()
@@ -181,3 +191,4 @@ class Manager:
         self.subject['Timestamp']['end'] = self.timer.get_time()
         with open(f'{self.sub}_{self.td}.json', 'w') as file:
             json.dump(self.subject, file)
+        print("The process has ended. Please verify the file's integrity. \n")
