@@ -147,7 +147,7 @@ class Manager:
                     json.dump(self.subject, file)
 
     def fill_dict(self):
-        with open(f'{self.sub}_{self.td}.json', r+) as file:
+        with open(f'{self.sub}_{self.td}.json', 'r+') as file:
             self.subject = json.load(file)
         phase = self.session.phase
         if phase in self.subject['Timestamp']:
@@ -173,3 +173,10 @@ class Manager:
     def new_round(self):
         self.session.next_round()
         self.fill_dict()
+
+    def end(self):
+        with open(f'{self.sub}_{self.td}.json', r+) as file:
+            self.subject = json.load(file)
+        self.subject['Timestamp']['end'] = self.timer.get_time()
+        with open(f'{self.sub}_{self.td}.json', 'w') as file:
+            json.dump(self.subject, file)
