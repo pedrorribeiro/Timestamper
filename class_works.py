@@ -1,7 +1,8 @@
 import time
 import asyncio
 import json
-from dataclasses import dataclass
+from datetime import date
+from dataclasses import dataclass, field
 
 
 @dataclass
@@ -104,4 +105,37 @@ class Session:
         else:
             self.phase_n_plus_one()
             self.next_phase()
+
+
+@dataclass
+class Manager:
+    subject: dict
+    session: Session = Session([], '', '', [], 1, 1)
+    timer: TimeManagement = TimeManagement(1.1)
+
+    def make_dict(self):
+        today = date.today()
+        self.subject = {
+            'subject': input('Insert Subject ID'),
+            'Date': today.strftime("%d/%m/%Y")
+            'Timestamp': {
+            }
+        }
+
+    def fill_dict(self):
+        phase = self.session.phase
+        if phase in self.subject['Timestamp']:
+            self.subject['Timestamp'][phase][self.session.round] = self.timer.get_time()
+        else:
+            self.subject['Timestamp'][phase] = {self.session.round: self.timer.get_time()}
+
+    def start(self):
+        self.session.make_object()
+        self.make_dict()
+        self.timer.mek_object()
+        self.fill_dict()
+
+    def new_round(self):
+        self.session.next_round()
+        self.fill_dict()
 
