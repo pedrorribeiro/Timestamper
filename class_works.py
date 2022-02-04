@@ -1,7 +1,7 @@
 import time
-import asyncio
 import json
 import os.path
+from pathlib import Path
 from datetime import date
 from dataclasses import dataclass, field
 
@@ -116,7 +116,7 @@ class Manager:
         self.session.make_object()
         today = date.today()
         self.subject = {
-            'subject': input('Insert Subject ID: \n'),
+            'subject': int(input('Insert Subject ID: \n')),
             'Date': today.strftime("%d/%m/%Y"),
             'Timestamp': {
             }
@@ -132,7 +132,7 @@ class Manager:
                 answer = int(input('A previous session with this subject and this date was detected. '
                                    'Would you like to restart (1) or continue(2) the session?\n'))
                 if answer == 1:
-                    with open(filename, 'w') as file:
+                    with open(filename, 'w+') as file:
                         json.dump(self.subject, file)
                     print(f'The protocol will restart')
                 elif answer == 2:
@@ -140,9 +140,11 @@ class Manager:
                         phase = json.load(current)
                     self.session.phase = phase['phase']
                     self.session.round = phase['round']
-            else:
-                with open(filename, 'w') as file:
-                    json.dump(self.subject, file)
+        else:
+            #filename = Path(filename)
+            #filename.touch(exist_ok=True)
+            with open(filename, 'w+') as file:
+                json.dump(self.subject, file)
 
     def fill_dict(self):
         with open(f'{self.sub}_{self.td}.json', 'r+') as file:
@@ -154,15 +156,14 @@ class Manager:
                 json.dump(self.subject, file)
         else:
             self.subject['Timestamp'][phase] = {self.session.round: self.timer.get_time()}
-            with open(f'{self.sub}_{self.td}.json', 'w') as file:
+            with open(f'{self.sub}_{self.td}.json', 'w+') as file:
                 json.dump(self.subject, file)
         current_pr = {'phase': self.session.phase, 'round': self.session.round}
-        with open('current.json', 'w') as current:
+        with open('current.json', 'w+') as current:
             json.dump(current_pr, current)
         print(f"{phase}, round {self.session.round}. \n")
 
     def start(self):
-        self.make_dict()
         self.timer.mek_object()
         self.fill_dict()
         current = f'{self.session.phase}: {self.session.round}'
