@@ -1,6 +1,7 @@
 import time
 import json
 import os.path
+import pyautogui
 from datetime import date
 from dataclasses import dataclass, field
 
