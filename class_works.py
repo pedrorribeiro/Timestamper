@@ -172,6 +172,28 @@ class Session:
 
 
 @dataclass
+class Clicker:
+    s_x: int
+    s_y: int
+    e_x: int
+    e_y: int
+
+    def maker(self):
+        with open('clicker.json', 'r') as file:
+            data = json.load(file)
+        self.s_x = data['start_x']
+        self.s_y = data['start_y']
+        self.e_x = data['end_x']
+        self.e_y = data['end_y']
+
+    def start(self):
+        pyautogui.click(self.s_x, self.s_y)
+
+    def end(self):
+        pyautogui.click(self.e_x, self.e_y)
+
+
+@dataclass
 class Manager:
     """
     Manages session and timer. Creates file to store subject timestamps.
@@ -179,6 +201,7 @@ class Manager:
     subject: dict
     sub: int
     td: str
+    clicker: Clicker = Clicker(0, 0, 0, 0)
     session: Session = Session([], '', '', [], 1, 1)
     timer: TimeManagement = TimeManagement(1.1)
 
@@ -245,6 +268,8 @@ class Manager:
         Starts the Timestamper session.
         :return:
         """
+        self.clicker.maker()
+        self.clicker.start()
         self.timer.mek_object()
         self.fill_dict()
         current = f'{self.session.phase}, {self.session.round}'
@@ -255,6 +280,7 @@ class Manager:
         Passes over to the next phase.
         :return:
         """
+        self.clicker.start()
         self.timer.mek_object()
         self.session.next_phase()
         self.fill_dict()
@@ -264,6 +290,7 @@ class Manager:
         Ends current phase.
         :return:
         """
+        self.clicker.end()
         with open(f'{self.sub}_{self.td}.json', 'r+') as file:
             self.subject = json.load(file)
         self.subject['Timestamp'][self.session.phase]['Phase End'] = self.timer.get_time()
@@ -284,6 +311,7 @@ class Manager:
         End the timestamper session.
         :return:
         """
+        self.clicker.end()
         with open(f'{self.sub}_{self.td}.json', 'r+') as file:
             self.subject = json.load(file)
         self.subject['Timestamp']['end'] = self.timer.get_time()
